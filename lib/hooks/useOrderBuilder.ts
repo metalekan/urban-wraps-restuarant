@@ -8,6 +8,7 @@ interface SelectedIngredient {
   id: string;
   name: string;
   priceAdd: number;
+  category: string;
 }
 
 interface SelectedAddOn {
@@ -112,7 +113,7 @@ export function useOrderBuilder() {
             name: ingredient.name,
             priceAdd: ingredient.priceAdd,
             category: ingredient.category,
-          } as any,
+          },
         ],
       }));
       return true;
@@ -170,7 +171,7 @@ export function useOrderBuilder() {
 
   // Get protein count
   const getProteinCount = () => {
-    return state.selectedIngredients.filter((i) => (i as any).category === 'protein').length;
+    return state.selectedIngredients.filter((i) => i.category === 'protein').length;
   };
 
   // Validation
