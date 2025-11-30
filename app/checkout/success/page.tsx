@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCart } from '@/lib/contexts/CartContext';
 import { Header } from '@/components/layout/Header';
@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle2, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
-export default function SuccessPage() {
+function SuccessContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
@@ -58,5 +58,27 @@ export default function SuccessPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-muted/30">
+        <Header />
+        <div className="container max-w-3xl mx-auto py-20 px-4">
+          <Card className="text-center p-8">
+            <CardContent className="space-y-6">
+              <div className="flex justify-center">
+                <CheckCircle2 className="h-24 w-24 text-green-500 animate-pulse" />
+              </div>
+              <h1 className="text-4xl font-bold text-green-600">Loading...</h1>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    }>
+      <SuccessContent />
+    </Suspense>
   );
 }
