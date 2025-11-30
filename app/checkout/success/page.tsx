@@ -8,7 +8,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { runFireworks } from '@/lib/utils/fireworks'; // We'll need to create this or remove it
 
 export default function SuccessPage() {
   const router = useRouter();
