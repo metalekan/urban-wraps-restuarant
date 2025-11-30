@@ -84,7 +84,7 @@ export default function CheckoutPage() {
 
       // We need to import these
       const { addDoc, collection, getFirestore } = await import('firebase/firestore');
-      const { app } = await import('@/lib/firebase/config');
+      const app = (await import('@/lib/firebase/config')).default;
       const db = getFirestore(app);
       
       const orderRef = await addDoc(collection(db, 'orders'), orderData);
