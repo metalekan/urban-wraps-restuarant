@@ -78,7 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
-  console.log(isMobile());
+  // console.log(isMobile());
 
   // Helper function to create user profile if it doesn't exist
   const createUserProfileIfNeeded = async (user: User) => {
@@ -128,8 +128,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Listen to auth state changes
+  // Listen to auth state changes and handle redirect results
   useEffect(() => {
+    // Handle redirect result from Google Sign-In (for mobile)
+    const handleRedirectResult = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result) {
+          // User successfully signed in via redirect
+          const user = result.user;
+          await createUserProfileIfNeeded(user);
+        }
+      } catch (error) {
+        console.error('Error handling redirect result:', error);
+      }
+    };
+
+    handleRedirectResult();
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
       if (user) {

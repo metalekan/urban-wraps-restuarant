@@ -21,16 +21,12 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
 
   useEffect(() => {
-    // console.log('[OrderContext] useEffect triggered, user:', user);
-    
     if (!user) {
-      // console.log('[OrderContext] No user, clearing orders');
       setOrders([]);
       setLoading(false);
       return;
     }
 
-    // console.log('[OrderContext] Setting up query for userId:', user.uid);
     setLoading(true);
     const ordersRef = collection(db, 'orders');
     const q = query(
@@ -39,34 +35,26 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       orderBy('createdAt', 'desc')
     );
 
-    // console.log('[OrderContext] Starting onSnapshot listener');
     const unsubscribe = onSnapshot(q, 
       (snapshot) => {
-        // console.log('[OrderContext] Snapshot received, docs count:', snapshot.docs.length);
         const orderData = snapshot.docs.map(doc => {
           const data = doc.data();
-          console.log('[OrderContext] Order doc:', doc.id, data);
           return {
             id: doc.id,
             ...data
           };
         }) as Order[];
         
-        // console.log('[OrderContext] Final orderData:', orderData);
         setOrders(orderData);
         setLoading(false);
       },
       (err) => {
-        console.error('[OrderContext] Error fetching orders:', err);
-        console.error('[OrderContext] Error code:', err.code);
-        console.error('[OrderContext] Error message:', err.message);
         setError('Failed to fetch orders');
         setLoading(false);
       }
     );
 
     return () => {
-      // console.log('[OrderContext] Cleaning up listener');
       unsubscribe();
     };
   }, [user]);
