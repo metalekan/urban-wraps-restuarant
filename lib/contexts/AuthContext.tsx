@@ -78,6 +78,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
+  console.log(isMobile());
+
   // Helper function to create user profile if it doesn't exist
   const createUserProfileIfNeeded = async (user: User) => {
     const userDoc = await getDoc(doc(db, 'users', user.uid));

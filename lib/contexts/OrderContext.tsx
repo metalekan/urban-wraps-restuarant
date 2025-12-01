@@ -24,7 +24,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     // console.log('[OrderContext] useEffect triggered, user:', user);
     
     if (!user) {
-      console.log('[OrderContext] No user, clearing orders');
+      // console.log('[OrderContext] No user, clearing orders');
       setOrders([]);
       setLoading(false);
       return;
