@@ -9,6 +9,8 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
 import { auth, db } from '../firebase/config';
@@ -69,13 +71,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await signInWithEmailAndPassword(auth, email, password);
   };
 
-  // Sign in with Google
-  const signInWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
+  // Helper function to check if user is on mobile
+  const isMobile = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    );
+  };
 
-    // Check if user profile exists, if not create one
+  // Helper function to create user profile if it doesn't exist
+  const createUserProfileIfNeeded = async (user: User) => {
     const userDoc = await getDoc(doc(db, 'users', user.uid));
     if (!userDoc.exists()) {
       const userProfile: UserProfile = {
@@ -89,6 +93,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       };
       await setDoc(doc(db, 'users', user.uid), userProfile);
       setUserProfile(userProfile);
+    }
+  };
+
+  // Sign in with Google
+  const signInWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    
+    // Use redirect for mobile, popup for desktop
+    if (isMobile()) {
+      // On mobile, use redirect (user will be redirected away and back)
+      await signInWithRedirect(auth, provider);
+      // Note: The result will be handled in the useEffect below
+    } else {
+      // On desktop, use popup
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      await createUserProfileIfNeeded(user);
     }
   };
 

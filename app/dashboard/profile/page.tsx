@@ -74,10 +74,10 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="container max-w-4xl mx-auto p-8">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">Profile Settings</h1>
-        <p className="text-lg text-muted-foreground">
+    <div className="container max-w-4xl mx-auto p-4 md:p-8">
+      <div className="mb-6 md:mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold mb-2">Profile Settings</h1>
+        <p className="text-base md:text-lg text-muted-foreground">
           Update your personal information
         </p>
       </div>

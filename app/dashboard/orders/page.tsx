@@ -63,9 +63,9 @@ export default function OrdersPage() {
   };
 
   return (
-    <div className='container max-w-4xl mx-auto p-8'>
+    <div className='container max-w-4xl mx-auto p-4 md:p-8'>
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">My Orders</h1>
+      <h1 className="text-2xl md:text-3xl font-bold">My Orders</h1>
 
       <div className="grid gap-6">
         {orders.map((order: Order) => (
