@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import {
   User,
   createUserWithEmailAndPassword,
@@ -138,9 +139,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           // User successfully signed in via redirect
           const user = result.user;
           await createUserProfileIfNeeded(user);
+          
+          // Show success toast for mobile redirect
+          toast.success('Signed in with Google successfully!');
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error handling redirect result:', error);
+        // Show error toast if redirect failed
+        if (error.code !== 'auth/popup-closed-by-user') {
+          toast.error(error.message || 'Failed to sign in with Google');
+        }
       }
     };
 
