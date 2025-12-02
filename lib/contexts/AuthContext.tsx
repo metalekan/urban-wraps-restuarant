@@ -76,12 +76,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Helper function to check if user is on mobile
   const isMobile = () => {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-      navigator.userAgent
-    );
+    const userAgent = navigator.userAgent;
+    const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+    console.log('Mobile detection:', { userAgent, isMobile: mobile });
+    return mobile;
   };
-
-  // console.log(isMobile());
 
   // Helper function to create user profile if it doesn't exist
   const createUserProfileIfNeeded = async (user: User) => {
@@ -103,14 +102,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Sign in with Google
   const signInWithGoogle = async () => {
+    console.log('Starting Google Sign-In...');
     const provider = new GoogleAuthProvider();
     
     // Use redirect for mobile, popup for desktop
     if (isMobile()) {
+      console.log('Mobile detected, using redirect...');
       // On mobile, use redirect (user will be redirected away and back)
-      await signInWithRedirect(auth, provider);
+      try {
+        await signInWithRedirect(auth, provider);
+        console.log('Redirect initiated successfully');
+      } catch (error) {
+        console.error('Error initiating redirect:', error);
+        toast.error('Failed to start sign-in process');
+      }
       // Note: The result will be handled in the useEffect below
     } else {
+      console.log('Desktop detected, using popup...');
       // On desktop, use popup
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
@@ -120,14 +128,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Sign in with GitHub
   const signInWithGithub = async () => {
+    console.log('Starting GitHub Sign-In...');
     const provider = new GithubAuthProvider();
     
     // Use redirect for mobile, popup for desktop
     if (isMobile()) {
+      console.log('Mobile detected, using redirect...');
       // On mobile, use redirect (user will be redirected away and back)
-      await signInWithRedirect(auth, provider);
+      try {
+        await signInWithRedirect(auth, provider);
+        console.log('Redirect initiated successfully');
+      } catch (error) {
+        console.error('Error initiating redirect:', error);
+        toast.error('Failed to start sign-in process');
+      }
       // Note: The result will be handled in the useEffect below
     } else {
+      console.log('Desktop detected, using popup...');
       // On desktop, use popup
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
@@ -152,21 +169,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Handle redirect result from Google Sign-In (for mobile)
     const handleRedirectResult = async () => {
+      console.log('Checking for redirect result...');
       try {
         const result = await getRedirectResult(auth);
+        console.log('Redirect result:', result);
         if (result) {
           // User successfully signed in via redirect
+          console.log('Successfully signed in via redirect:', result.user.email);
           const user = result.user;
           await createUserProfileIfNeeded(user);
           
           // Show success toast for mobile redirect
-          toast.success('Signed in with Google successfully!');
+          toast.success('Signed in successfully!');
+        } else {
+          console.log('No redirect result found');
         }
       } catch (error: any) {
         console.error('Error handling redirect result:', error);
         // Show error toast if redirect failed
         if (error.code !== 'auth/popup-closed-by-user') {
-          toast.error(error.message || 'Failed to sign in with Google');
+          toast.error(error.message || 'Failed to sign in');
         }
       }
     };
