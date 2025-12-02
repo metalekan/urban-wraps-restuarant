@@ -9,6 +9,7 @@ import {
   signOut,
   onAuthStateChanged,
   GoogleAuthProvider,
+  GithubAuthProvider,
   signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
@@ -24,6 +25,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, name: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
+  signInWithGithub: () => Promise<void>;
   logout: () => Promise<void>;
   refreshUserProfile: () => Promise<void>;
 }
@@ -116,6 +118,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Sign in with GitHub
+  const signInWithGithub = async () => {
+    const provider = new GithubAuthProvider();
+    
+    // Use redirect for mobile, popup for desktop
+    if (isMobile()) {
+      // On mobile, use redirect (user will be redirected away and back)
+      await signInWithRedirect(auth, provider);
+      // Note: The result will be handled in the useEffect below
+    } else {
+      // On desktop, use popup
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      await createUserProfileIfNeeded(user);
+    }
+  };
+
   // Logout user
   const logout = async () => {
     await signOut(auth);
@@ -174,6 +193,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signUp,
     login,
     signInWithGoogle,
+    signInWithGithub,
     logout,
     refreshUserProfile,
   };
